@@ -1,64 +1,93 @@
-<script lang="ts">
+<script>
   import { onMount } from 'svelte';
-  import svelteLogo from './assets/svelte.svg';
-  import viteLogo from '/vite.svg';
-  import Counter from './lib/Counter.svelte';
 
-  let apiKey: string = '';
+  let today = '';
+  let menuOpen = false;
 
-  onMount(async () => {
-    try {
-      const res = await fetch('/api/key');
-      const data = await res.json();
-      apiKey = data.apiKey;
-    } catch (error) {
-      console.error('Failed to fetch API key:', error);
-    }
+  onMount(() => {
+    today = new Date().toLocaleDateString('en-US', { 
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    });
   });
+
+  function toggleMenu() {
+    menuOpen = !menuOpen;
+  }
 </script>
 
-<main>
-  <div>
-    <a href="https://vite.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
+<header>
+  <div class="header-top">
+    <h1>The New York Times</h1>
+    <button class="hamburger" on:click={toggleMenu}>☰</button>
   </div>
-  <h1>Vite + Svelte</h1>
+  <p class="date time">{today}</p>
+</header>
 
-  <div class="card">
-    <Counter />
-  </div>
+<p class="date2 time {menuOpen ? 'open' : ''}">{today}</p>
 
-  <p>
-    Your API Key: <strong>{apiKey}</strong>
-  </p>
+<nav class="topnav {menuOpen ? 'open' : ''}">
+  <ul>
+    <li>U.S.</li>
+    <li>World</li>
+    <li>Business</li>
+    <li>Arts</li>
+    <li>Lifestyle</li>
+    <li>Opinion</li>
+    <li class="divider"></li>
+    <li>Audio</li>
+    <li>Games</li>
+    <li>Cooking</li>
+    <li>Wirecutter</li>
+    <li>The Athletic</li>
+  </ul>
+</nav>
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
 
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+<main class="container">
+  <section class="column sideColumn">
+    <section class="columnSection">
+      <img src="placeholder.png" alt="SideImage" />
+      <h2>Side Column Left 1</h2>
+      <p>This is the information to be shown.</p>
+    </section>
+    <div class="columnDivider"></div>
+    <section class="columnSection">
+      <h2>Side Column Left 2</h2>
+      <p>This is the information to be shown.</p>
+    </section>
+  </section>
+
+  <section class="column midColumn">
+    <section class="columnSection">
+      <h2>Column Middle 1</h2>
+      <p>This is the information to be shown.</p>
+    </section>
+    <div class="columnDivider"></div>
+    <section class="columnSection">
+      <img src="placeholder.png" alt="MiddleImage" />
+      <h2>Column Middle 2</h2>
+      <p>This is the information to be shown.</p>
+    </section>
+  </section>
+
+  <section class="column sideColumn">
+    <section class="columnSection">
+      <img src="placeholder.png" alt="SideImage" />
+      <h2>Side Column Right 1</h2>
+      <p>This is the information to be shown.</p>
+    </section>
+    <div class="columnDivider"></div>
+    <section class="columnSection">
+      <h2>Side Column Right 2</h2>
+      <p>This is the information to be shown.</p>
+    </section>  
+  </section>
 </main>
 
+<footer>
+  &copy;2025 ECS 162 HW1. &copy;Jaden Yang. All rights reserved.
+</footer>
+
 <style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
+  @import './app.css';
 </style>
