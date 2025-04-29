@@ -1,17 +1,39 @@
 <script>
   import { onMount } from 'svelte';
 
-  let today = '';
-  let menuOpen = false;
+  export let today = '';
+  export let menuOpen = false;
+  export let fetchError = false;
+  /**
+     * @type {any[]}
+     */
+  let articles = []
 
   onMount(() => {
     today = new Date().toLocaleDateString('en-US', { 
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
     });
+    fetchArticles();
   });
 
-  function toggleMenu() {
+  export function toggleMenu() {
     menuOpen = !menuOpen;
+  }
+
+  async function fetchArticles() {
+    try {
+      const res = await fetch('/api/key'); 
+      const { apiKey } = await res.json();
+
+      const response = await fetch(`https://api.nytimes.com/svc/search/v2/articlesearch.json?fq=timesTag.location%3Asacramento&api-key=${apiKey}`);
+      const data = await response.json();
+      
+      articles = data.response.docs.slice(0, 9);
+      
+    } catch (error) {
+      fetchError = true;
+      console.error('Failed to fetch articles:', error);
+    }
   }
 </script>
 
@@ -42,51 +64,33 @@
   </ul>
 </nav>
 
-
+{#if fetchError}
+  <p>Failed to load news. Please try again later.</p>
+{:else if articles.length === 0}
+  <p>Loading latest news...</p>
+{:else}
 <main class="container">
-  <section class="column sideColumn">
-    <section class="columnSection">
-      <img src="placeholder.png" alt="SideImage" />
-      <h2>Side Column Left 1</h2>
-      <p>This is the information to be shown.</p>
+  {#each articles as article, i}
+    <section class="column {i % 3 === 1 ? 'midColumn' : 'sideColumn'}">
+      <section class="columnSection">
+        {#if article.multimedia && article.multimedia.length}
+          <img src={"https://www.nytimes.com/" + article.multimedia[0].url} alt={article.multimedia[0].caption || 'Article Image'} />
+        {/if}
+        <h2>{article.headline.main}</h2> <!-- Corrected headline -->
+        <p>{article.abstract}</p>
+      </section>
+      <div class="columnDivider"></div>
     </section>
-    <div class="columnDivider"></div>
-    <section class="columnSection">
-      <h2>Side Column Left 2</h2>
-      <p>This is the information to be shown.</p>
-    </section>
-  </section>
-
-  <section class="column midColumn">
-    <section class="columnSection">
-      <h2>Column Middle 1</h2>
-      <p>This is the information to be shown.</p>
-    </section>
-    <div class="columnDivider"></div>
-    <section class="columnSection">
-      <img src="placeholder.png" alt="MiddleImage" />
-      <h2>Column Middle 2</h2>
-      <p>This is the information to be shown.</p>
-    </section>
-  </section>
-
-  <section class="column sideColumn">
-    <section class="columnSection">
-      <img src="placeholder.png" alt="SideImage" />
-      <h2>Side Column Right 1</h2>
-      <p>This is the information to be shown.</p>
-    </section>
-    <div class="columnDivider"></div>
-    <section class="columnSection">
-      <h2>Side Column Right 2</h2>
-      <p>This is the information to be shown.</p>
-    </section>  
-  </section>
+  {/each}
 </main>
+{/if}
+
+
 
 <footer>
   &copy;2025 ECS 162 HW1. &copy;Jaden Yang. All rights reserved.
 </footer>
+
 
 <style>
   @import './app.css';
