@@ -25,10 +25,25 @@
       const res = await fetch('/api/key'); 
       const { apiKey } = await res.json();
 
-      const response = await fetch(`https://api.nytimes.com/svc/search/v2/articlesearch.json?fq=timesTag.location%3Asacramento&api-key=${apiKey}`);
-      const data = await response.json();
+      const todayDate = new Date();
+      const lastWeekDate = new Date();
+
+      lastWeekDate.setDate(todayDate.getDate() - 30);
+
+      const formatDate = (date) => date.toISOString().split('T')[0].replace(/-/g, '');
+
+      const beginDate = formatDate(lastWeekDate);
+      const endDate = formatDate(todayDate);
+    
+
+      const response = await fetch(
+        `https://api.nytimes.com/svc/search/v2/articlesearch.json?begin_date=${beginDate}&end_date=${endDate}&fq=typeOfMaterials%3AU.S.ANDtimesTag.location%253A%22Sacramento%22&sort=newest&api-key=${apiKey}`
+      );
+    const data = await response.json();
       
       articles = data.response.docs.slice(0, 9);
+
+      console.log(articles)
       
     } catch (error) {
       fetchError = true;
@@ -73,10 +88,10 @@
   {#each articles as article, i}
     <section class="column {i % 3 === 1 ? 'midColumn' : 'sideColumn'}">
       <section class="columnSection">
-        {#if article.multimedia && article.multimedia.length}
-          <img src={"https://www.nytimes.com/" + article.multimedia[0].url} alt={article.multimedia[0].caption || 'Article Image'} />
+        {#if article.multimedia}
+          <img src={article.multimedia.default.url} alt={article.multimedia.caption || 'Article Image'} />
         {/if}
-        <h2>{article.headline.main}</h2> <!-- Corrected headline -->
+        <h2>{article.headline.main}</h2> 
         <p>{article.abstract}</p>
       </section>
       <div class="columnDivider"></div>
