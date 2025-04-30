@@ -28,7 +28,7 @@
       const todayDate = new Date();
       const lastWeekDate = new Date();
 
-      lastWeekDate.setDate(todayDate.getDate() - 30);
+      lastWeekDate.setDate(todayDate.getDate() - 60);
 
       const formatDate = (date) => date.toISOString().split('T')[0].replace(/-/g, '');
 
@@ -37,7 +37,7 @@
     
 
       const response = await fetch(
-        `https://api.nytimes.com/svc/search/v2/articlesearch.json?begin_date=${beginDate}&end_date=${endDate}&fq=typeOfMaterials%3AU.S.ANDtimesTag.location%253A%22Sacramento%22&sort=newest&api-key=${apiKey}`
+        `https://api.nytimes.com/svc/search/v2/articlesearch.json?begin_date=${beginDate}&end_date=${endDate}&fq=timesTag.location%253A%22Sacramento%22&sort=newest&api-key=${apiKey}`
       );
     const data = await response.json();
       
