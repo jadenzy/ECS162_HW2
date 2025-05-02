@@ -1,5 +1,8 @@
 ## ECS162 Homework 2 – Jaden Yang
 
+### I completed this assignment before realizing a partner is needed, so I just turn in my individual work 
+### Github link: https://github.com/jadenzy/ECS162_HW2.git
+
 ### Running Instructions
 
 - **Test `api.js` (frontend):**  
