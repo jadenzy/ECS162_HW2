@@ -1,54 +1,27 @@
 <script>
   import { onMount } from 'svelte';
-
+  import { fetchArticles } from './lib/api.js';
+  
   export let today = '';
   export let menuOpen = false;
-  export let fetchError = false;
-  /**
-     * @type {any[]}
-     */
-  let articles = []
 
-  onMount(() => {
+  /**
+     * @type {string | any[]}
+     */
+  let articles = [];
+  let fetchError = false;
+
+  onMount(async () => {
     today = new Date().toLocaleDateString('en-US', { 
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
     });
-    fetchArticles();
+    const result = await fetchArticles();
+    articles = result.articles;
+    fetchError = result.fetchError;
   });
 
   export function toggleMenu() {
     menuOpen = !menuOpen;
-  }
-
-  async function fetchArticles() {
-    try {
-      const res = await fetch('/api/key'); 
-      const { apiKey } = await res.json();
-
-      const todayDate = new Date();
-      const lastWeekDate = new Date();
-
-      lastWeekDate.setDate(todayDate.getDate() - 60);
-
-      const formatDate = (date) => date.toISOString().split('T')[0].replace(/-/g, '');
-
-      const beginDate = formatDate(lastWeekDate);
-      const endDate = formatDate(todayDate);
-    
-
-      const response = await fetch(
-        `https://api.nytimes.com/svc/search/v2/articlesearch.json?begin_date=${beginDate}&end_date=${endDate}&fq=timesTag.location%253A%22Sacramento%22&sort=newest&api-key=${apiKey}`
-      );
-    const data = await response.json();
-      
-      articles = data.response.docs.slice(0, 9);
-
-      console.log(articles)
-      
-    } catch (error) {
-      fetchError = true;
-      console.error('Failed to fetch articles:', error);
-    }
   }
 </script>
 
@@ -87,6 +60,12 @@
 <main class="container">
   {#each articles as article, i}
     <section class="column {i % 3 === 1 ? 'midColumn' : 'sideColumn'}">
+      <a 
+      href={article.web_url} 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      class="column-link"
+    >
       <section class="columnSection">
         {#if article.multimedia}
           <img src={article.multimedia.default.url} alt={article.multimedia.caption || 'Article Image'} />
@@ -95,17 +74,15 @@
         <p>{article.abstract}</p>
       </section>
       <div class="columnDivider"></div>
+    </a>
     </section>
   {/each}
 </main>
 {/if}
 
-
-
 <footer>
   &copy;2025 ECS 162 HW1. &copy;Jaden Yang. All rights reserved.
 </footer>
-
 
 <style>
   @import './app.css';
