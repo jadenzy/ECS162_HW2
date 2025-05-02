@@ -32,9 +32,9 @@
   - **`api.js`** – API call implementation:
     - Fetches articles with parameters:
       - `begin_date` and `end_date` covering a 30-day range
-      - `timesTag.location: Sacramento`
+      - `timesTag.location: Sacramento`: even I add this, but some return articles seems in other area, I tried to use other key words but not works well 
       - `sort = newest`
-    - Uses the first **9 articles** from the response
+    - Uses the first **9 articles** from the response since the main section is default with 9 sections 
     - Returns the 9 articles and any error
 
 - **`app.css`**
