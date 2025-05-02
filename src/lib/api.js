@@ -18,7 +18,7 @@ export async function fetchArticles() {
         const response = await fetch(
             `https://api.nytimes.com/svc/search/v2/articlesearch.json?begin_date=${beginDate}&end_date=${endDate}&fq=timesTag.location%253A%22Sacramento%22&sort=newest&api-key=${apiKey}`
         );
-            const data = await response.json();
+        const data = await response.json();
         
         articles = data.response.docs.slice(0, 9);
 
